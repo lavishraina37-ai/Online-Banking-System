@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Transaction History</title>
+
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+
+body{
+    background:#f1f5f9;
+}
+
+
+
+.navbar{
+
+    background:#0f172a;
+    color:white;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+
+
+.logo{
+
+    font-size:24px;
+    font-weight:bold;
+
+}
+
+
+
+.back-btn{
+
+    background:#2563eb;
+    color:white;
+    text-decoration:none;
+    padding:10px 20px;
+    border-radius:8px;
+
+}
+
+
+
+.container{
+
+    width:90%;
+    max-width:900px;
+    margin:30px auto;
+
+}
+
+
+
+h1{
+
+    text-align:center;
+    color:#0f172a;
+    margin-bottom:10px;
+
+}
+
+
+
+.subtitle{
+
+    text-align:center;
+    color:#64748b;
+    margin-bottom:25px;
+
+}
+
+
+
+
+.search-box{
+
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+
+}
+
+
+
+input{
+
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:16px;
+
+}
+
+
+
+.buttons{
+
+    margin-top:15px;
+
+}
+
+
+
+button{
+
+    padding:10px 20px;
+    margin-right:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+
+}
+
+
+
+button:hover{
+
+    background:#2563eb;
+    color:white;
+
+}
+
+
+
+
+.transaction-card{
+
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+
+}
+
+
+
+.deposit{
+
+    border-left:6px solid green;
+
+}
+
+
+
+.withdraw{
+
+    border-left:6px solid red;
+
+}
+
+
+
+.amount{
+
+    font-size:22px;
+    font-weight:bold;
+    margin:10px 0;
+
+}
+
+
+
+.date{
+
+    color:#64748b;
+    margin-top:10px;
+
+}
+
+
+
+.no-data{
+
+    background:white;
+    padding:30px;
+    text-align:center;
+    border-radius:10px;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<div class="navbar">
+
+
+<div class="logo">
+🏦 Secure Bank
+</div>
+
+
+
+<a href="dashboard.html" class="back-btn">
+Dashboard
+</a>
+
+
+</div>
+
+
+
+
+<div class="container">
+
+
+<h1>
+Transaction History
+</h1>
+
+
+<p class="subtitle">
+All deposits and withdrawals
+</p>
+
+
+
+<div class="search-box">
+
+
+<input 
+type="text"
+id="searchBox"
+placeholder="Search transaction..."
+>
+
+
+
+<div class="buttons">
+
+
+<button onclick="filterTransaction('all')">
+All
+</button>
+
+
+<button onclick="filterTransaction('Deposit')">
+Deposit
+</button>
+
+
+<button onclick="filterTransaction('Withdraw')">
+Withdraw
+</button>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+<div id="history">
+
+
+<div class="no-data">
+Loading transactions...
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<!-- IMPORTANT PATH -->
+<script type="module" src="../js/history.js"></script>
+
+
+</body>
+
+</html>

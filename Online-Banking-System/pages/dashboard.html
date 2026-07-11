@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Online Banking Dashboard</title>
+
+<link rel="stylesheet" href="../css/dashboard.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+<h2><i class="fa-solid fa-building-columns"></i> Online Banking</h2>
+
+</div>
+
+<button id="logoutBtn">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+Logout
+
+</button>
+
+</header>
+
+<div class="container">
+
+<div class="welcome-card">
+
+<h2 id="welcomeUser">Welcome</h2>
+
+<p>Manage your banking securely.</p>
+
+</div>
+
+<div class="balance-card">
+
+<h3>Available Balance</h3>
+
+<h1 id="balance">₹0</h1>
+
+</div>
+
+<div class="account-card">
+
+<h3>Account Details</h3>
+
+<p><strong>Account Number:</strong> <span id="accountNumber">Loading...</span></p>
+
+<p><strong>Customer ID:</strong> <span id="customerId">Loading...</span></p>
+
+<p><strong>Account Type:</strong> <span id="accountType">Savings</span></p>
+
+<p><strong>IFSC:</strong> <span id="ifscCode">Loading...</span></p>
+
+<p><strong>Branch:</strong> <span id="branch">Loading...</span></p>
+
+</div>
+
+<div class="action-grid">
+
+<a href="deposit.html" class="action-card">
+
+<i class="fa-solid fa-money-bill-wave"></i>
+
+<h3>Deposit</h3>
+
+</a>
+
+<a href="withdraw.html" class="action-card">
+
+<i class="fa-solid fa-wallet"></i>
+
+<h3>Withdraw</h3>
+
+</a>
+
+<a href="transfer.html" class="action-card">
+
+<i class="fa-solid fa-money-bill-transfer"></i>
+
+<h3>Transfer</h3>
+
+</a>
+
+<a href="history.html" class="action-card">
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+<h3>History</h3>
+
+</a>
+
+<a href="profile.html" class="action-card">
+
+<i class="fa-solid fa-user"></i>
+
+<h3>Profile</h3>
+
+</a>
+
+</div>
+
+<div class="recent-card">
+
+<h2>Recent Transactions</h2>
+
+<div id="recentTransactions">
+
+<p>No recent transactions.</p>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module" src="../js/dashboard.js"></script>
+
+</body>
+
+</html>

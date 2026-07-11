@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Banking - Register</title>
+
+    <link rel="stylesheet" href="../css/auth.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        <i class="fa-solid fa-building-columns"></i>
+        <h1>Online Banking</h1>
+    </div>
+
+    <h2>Create Your Bank Account</h2>
+
+    <form id="registerForm">
+
+        <div class="input-group">
+
+            <label>Full Name</label>
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Enter Full Name"
+                required>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Email Address</label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter Email"
+                required>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Phone Number</label>
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="Enter Phone Number"
+                maxlength="10"
+                pattern="[0-9]{10}"
+                required>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Create Password"
+                minlength="6"
+                required>
+
+        </div>
+
+        <button type="submit">
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            Create Account
+
+        </button>
+
+    </form>
+
+    <div class="login-link">
+
+        Already have an account?
+
+        <a href="login.html">
+
+            Login Here
+
+        </a>
+
+    </div>
+
+    <br>
+
+    <a class="home-link" href="../index.html">
+
+        ← Back to Home
+
+    </a>
+
+</div>
+
+<script type="module" src="../js/register.js"></script>
+
+</body>
+</html>
