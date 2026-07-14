@@ -30,11 +30,15 @@ onAuthStateChanged(auth, async (user) => {
 
         const data = docSnap.data();
 
-        name.textContent = data.name;
+        const nameVal = data.name ?? data.personalDetails?.name ?? "N/A";
+        const emailVal = data.email ?? data.personalDetails?.email ?? "N/A";
+        const balanceVal = data.balance ?? data.accountInfo?.balance ?? 0;
 
-        email.textContent = "📧 " + data.email;
+        name.textContent = nameVal;
 
-        balance.textContent = "₹" + data.balance;
+        email.textContent = "📧 " + emailVal;
+
+        balance.textContent = "₹" + balanceVal;
 
         uid.textContent = "User ID: " + user.uid;
 

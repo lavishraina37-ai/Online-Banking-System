@@ -194,7 +194,7 @@ data.forEach((item)=>{
 
 let css =
 
-item.type==="Deposit"
+(item.type==="Deposit" || item.type==="Transfer (Received)")
 
 ?
 
@@ -368,6 +368,12 @@ let filtered =
 transactions.filter((item)=>{
 
 
+if (type === "Deposit") {
+    return item.type === "Deposit" || item.type === "Transfer (Received)";
+}
+if (type === "Withdraw") {
+    return item.type === "Withdraw" || item.type === "Transfer (Sent)";
+}
 return item.type===type;
 
 

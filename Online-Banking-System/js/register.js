@@ -108,68 +108,26 @@ form.addEventListener("submit", async (e) => {
 
 
 
-    // Save User Data in Firestore
-
+    // Save User Data in Firestore (Flat Structure)
 
     await setDoc(
       doc(db,"users",user.uid),
       {
-
-
         uid:user.uid,
-
-
-        personalDetails:{
-
-
-          name:name,
-
-          email:email,
-
-          phone:phone,
-
-
-        },
-
-
-        bankDetails:{
-
-
-          accountNumber:accountNumber,
-
-          customerId:customerId,
-
-          ifscCode:ifscCode,
-
-          branch:branch,
-
-          accountType:"Savings"
-
-
-        },
-
-
-        accountInfo:{
-
-
-          balance:10000,
-
-          kycStatus:"Pending"
-
-
-        },
-
-
+        name:name,
+        email:email,
+        phone:phone,
+        accountNumber:accountNumber,
+        customerId:customerId,
+        ifscCode:ifscCode,
+        branch:branch,
+        accountType:"Savings",
+        balance:10000,
+        kycStatus:"Pending",
         profileImage:profileImage,
-
-
         createdAt:serverTimestamp(),
-
         lastLogin:serverTimestamp()
-
-
       }
-
     );
 
 

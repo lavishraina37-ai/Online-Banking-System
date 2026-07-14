@@ -1,5 +1,9 @@
 import { auth, db } from "./firebase.js";
 
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 import {
     doc,
@@ -10,365 +14,147 @@ import {
     orderBy,
     limit,
     getDocs
-}
-from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-
-import {
-    signOut
-}
-from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-
-
-
-
-// HTML Elements
-
+// DOM Elements
+const welcomeHeader = document.querySelector(".welcome h1");
 const balanceBox = document.getElementById("balance");
+const accountNumberBox = document.getElementById("accountNumber");
+const customerIdBox = document.getElementById("customerId");
+const ifscBox = document.getElementById("ifsc");
+const branchBox = document.getElementById("branch");
+const recentTransactionsBox = document.getElementById("recentTransactions");
+const logoutBtn = document.getElementById("logoutBtn");
 
-const accountNumberBox =
-document.getElementById("accountNumber");
-
-const customerIdBox =
-document.getElementById("customerId");
-
-const ifscBox =
-document.getElementById("ifsc");
-
-const branchBox =
-document.getElementById("branch");
-
-const recentDiv =
-document.getElementById("recentTransactions");
-
-
-
-
-
-// Check Login
-
-
-auth.onAuthStateChanged(async(user)=>{
-
-
-    if(!user){
-
-        window.location.href="login.html";
-
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "login.html";
         return;
-
     }
-
-
-
-    console.log(
-        "Dashboard User:",
-        user.uid
-    );
-
-
-
-    loadUserData(user.uid);
-
-    loadRecentTransactions(user.uid);
-
-
-
+    await loadUserData(user.uid);
+    await loadRecentTransactions(user.uid);
 });
 
+async function loadUserData(uid) {
+    try {
+        const userRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userRef);
 
+        if (!userSnap.exists()) {
+            console.log("User document not found");
+            return;
+        }
 
+        const data = userSnap.data();
+        console.log("User Data:", data);
 
+        // Welcome header
+        const name = data.name ?? data.personalDetails?.name ?? "User";
+        if (welcomeHeader) {
+            welcomeHeader.textContent = `Welcome, ${name}`;
+        }
 
+        // Balance
+        const balance = data.balance ?? data.accountInfo?.balance ?? 0;
+        if (balanceBox) {
+            balanceBox.innerHTML = "₹" + balance;
+        }
 
+        // Account Number
+        const accountNumber = data.accountNumber ?? data.bankDetails?.accountNumber ?? "Not Generated";
+        if (accountNumberBox) {
+            accountNumberBox.innerHTML = accountNumber;
+        }
 
-// Load User Details
+        // Customer ID
+        let customerId = data.customerId ?? data.bankDetails?.customerId ?? "";
+        if (typeof customerId === "string") {
+            const cleanCust = customerId.trim().toLowerCase();
+            if (!cleanCust || cleanCust === "not available" || cleanCust === "n/a" || cleanCust === "null" || cleanCust === "undefined") {
+                customerId = "CUST" + uid.substring(0, 8).toUpperCase();
+            }
+        } else if (!customerId) {
+            customerId = "CUST" + uid.substring(0, 8).toUpperCase();
+        }
+        if (customerIdBox) {
+            customerIdBox.innerHTML = customerId;
+        }
 
+        // IFSC
+        let ifsc = data.ifscCode ?? data.bankDetails?.ifscCode ?? data.ifsc ?? "";
+        if (typeof ifsc === "string") {
+            const cleanIfsc = ifsc.trim().toLowerCase();
+            if (!cleanIfsc || cleanIfsc === "not available" || cleanIfsc === "n/a" || cleanIfsc === "null" || cleanIfsc === "undefined") {
+                ifsc = "SBIN0001234";
+            }
+        } else if (!ifsc) {
+            ifsc = "SBIN0001234";
+        }
+        if (ifscBox) {
+            ifscBox.innerHTML = ifsc;
+        }
 
-async function loadUserData(uid){
+        // Branch
+        let branch = data.branch ?? data.bankDetails?.branch ?? "";
+        if (typeof branch === "string") {
+            const cleanBranch = branch.trim().toLowerCase();
+            if (!cleanBranch || cleanBranch === "not available" || cleanBranch === "n/a" || cleanBranch === "null" || cleanBranch === "undefined") {
+                branch = "Main Branch";
+            }
+        } else if (!branch) {
+            branch = "Main Branch";
+        }
+        if (branchBox) {
+            branchBox.innerHTML = branch;
+        }
 
-
-try{
-
-
-const userRef =
-doc(db,"users",uid);
-
-
-
-const userSnap =
-await getDoc(userRef);
-
-
-
-if(userSnap.exists()){
-
-
-const data =
-userSnap.data();
-
-
-
-console.log(
-"User Data:",
-data
-);
-
-
-
-if(balanceBox)
-balanceBox.innerHTML =
-"₹"+(data.balance || 0);
-
-
-
-if(accountNumberBox)
-accountNumberBox.innerHTML =
-data.accountNumber || "Not Generated";
-
-
-
-if(customerIdBox)
-customerIdBox.innerHTML =
-data.customerId || "Not Available";
-
-
-
-if(ifscBox)
-ifscBox.innerHTML =
-data.ifsc || "Not Available";
-
-
-
-if(branchBox)
-branchBox.innerHTML =
-data.branch || "Not Available";
-
-
-
+    } catch (error) {
+        console.error("User Loading Error:", error);
+    }
 }
 
-else{
+async function loadRecentTransactions(uid) {
+    try {
+        if (!recentTransactionsBox) return;
 
+        const q = query(
+            collection(db, "transactions"),
+            where("uid", "==", uid),
+            orderBy("createdAt", "desc"),
+            limit(5)
+        );
 
-console.log(
-"User document not found"
-);
+        const querySnapshot = await getDocs(q);
+        recentTransactionsBox.innerHTML = "";
 
+        if (querySnapshot.empty) {
+            recentTransactionsBox.innerHTML = "<p>No recent transactions</p>";
+            return;
+        }
 
-
+        querySnapshot.forEach((doc) => {
+            const txn = doc.data();
+            let css = (txn.type === "Deposit" || txn.type === "Transfer (Received)") ? "deposit" : "withdraw";
+            let dateStr = txn.createdAt ? txn.createdAt.toDate().toLocaleString() : "No Date";
+            
+            recentTransactionsBox.innerHTML += `
+                <div class="transaction-card ${css}">
+                    <h4>${txn.type}</h4>
+                    <p>Amount: ₹${txn.amount}</p>
+                    <p>Balance: ₹${txn.newBalance ?? txn.balance}</p>
+                    <p>Date: ${dateStr}</p>
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading recent transactions:", error);
+        recentTransactionsBox.innerHTML = "<p>Error loading transactions</p>";
+    }
 }
 
-
-
-}
-
-catch(error){
-
-
-console.log(
-"User Loading Error:",
-error
-);
-
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-// Load Recent Transactions
-
-
-async function loadRecentTransactions(uid){
-
-
-try{
-
-
-const q=query(
-
-
-collection(db,"transactions"),
-
-
-where(
-"uid",
-"==",
-uid
-),
-
-
-orderBy(
-"createdAt",
-"desc"
-),
-
-
-limit(5)
-
-
-
-);
-
-
-
-const snapshot =
-await getDocs(q);
-
-
-
-console.log(
-"Recent Transactions:",
-snapshot.size
-);
-
-
-
-recentDiv.innerHTML="";
-
-
-
-if(snapshot.empty){
-
-
-recentDiv.innerHTML =
-`
-<p>
-No Recent Transactions
-</p>
-`;
-
-return;
-
-
-}
-
-
-
-
-
-snapshot.forEach((doc)=>{
-
-
-const data =
-doc.data();
-
-
-
-recentDiv.innerHTML +=
-
-`
-
-<div class="transaction-card">
-
-
-<h4>
-${data.type}
-</h4>
-
-
-<p>
-Amount:
-₹${data.amount}
-</p>
-
-
-<p>
-Balance:
-₹${data.balance}
-</p>
-
-
-<p>
-${
-data.createdAt
-?
-data.createdAt.toDate().toLocaleString()
-:
-""
-}
-</p>
-
-
-</div>
-
-
-`;
-
-
-
-});
-
-
-
-}
-
-
-catch(error){
-
-
-console.log(
-"Recent Transaction Error:",
-error
-);
-
-
-recentDiv.innerHTML =
-`
-<p>
-${error.message}
-</p>
-`;
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-// Logout
-
-
-const logoutBtn =
-document.getElementById("logoutBtn");
-
-
-
-if(logoutBtn){
-
-
-logoutBtn.addEventListener(
-"click",
-async()=>{
-
-
-await signOut(auth);
-
-
-window.location.href="login.html";
-
-
-});
-
-
-
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+        await signOut(auth);
+        window.location.href = "login.html";
+    });
 }

@@ -67,13 +67,18 @@ onAuthStateChanged(auth, (user) => {
 
             const data = snap.data();
 
-            const previousBalance = Number(data.balance);
+            const previousBalance = Number(data.balance ?? data.accountInfo?.balance ?? 0);
 
             const newBalance = previousBalance + amount;
+
+            const name = data.name ?? data.personalDetails?.name ?? "N/A";
+            const email = data.email ?? data.personalDetails?.email ?? "N/A";
+            const accountNumber = data.accountNumber ?? data.bankDetails?.accountNumber ?? "N/A";
 
             await updateDoc(userRef, {
 
                 balance: newBalance,
+                ...(data.accountInfo ? { "accountInfo.balance": newBalance } : {}),
 
                 lastTransaction: serverTimestamp()
 
@@ -88,11 +93,11 @@ onAuthStateChanged(auth, (user) => {
 
                 uid: user.uid,
 
-                name: data.name,
+                name: name,
 
-                email: data.email,
+                email: email,
 
-                accountNumber: data.accountNumber || "N/A",
+                accountNumber: accountNumber,
 
                 type: "Deposit",
 

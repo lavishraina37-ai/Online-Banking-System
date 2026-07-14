@@ -10,6 +10,7 @@ import {
     where,
     getDocs,
     doc,
+    getDoc,
     runTransaction,
     addDoc,
     serverTimestamp
@@ -33,18 +34,17 @@ onAuthStateChanged(auth, (user) => {
 
         try {
 
-            const receiverEmail = document
-                .getElementById("receiverEmail")
+            const receiverAccount = document
+                .getElementById("receiverAccount")
                 .value
-                .trim()
-                .toLowerCase();
+                .trim();
 
             const amount = Number(
                 document.getElementById("amount").value
             );
 
-            if (!receiverEmail) {
-                alert("Please enter receiver email.");
+            if (!receiverAccount) {
+                alert("Please enter receiver account number.");
                 return;
             }
 
@@ -53,16 +53,22 @@ onAuthStateChanged(auth, (user) => {
                 return;
             }
 
-            if (receiverEmail === user.email.toLowerCase()) {
+            const senderRef = doc(db, "users", user.uid);
+            const senderSnap = await getDoc(senderRef);
+            if (!senderSnap.exists()) {
+                alert("Sender account not found.");
+                return;
+            }
+            const senderData = senderSnap.data();
+
+            if (receiverAccount === senderData.accountNumber) {
                 alert("You cannot transfer money to yourself.");
                 return;
             }
 
-            const senderRef = doc(db, "users", user.uid);
-
             const receiverQuery = query(
                 collection(db, "users"),
-                where("email", "==", receiverEmail)
+                where("accountNumber", "==", receiverAccount)
             );
 
             const receiverSnapshot = await getDocs(receiverQuery);
@@ -79,6 +85,7 @@ onAuthStateChanged(auth, (user) => {
             let receiverName = "";
             let senderBalance = 0;
             let receiverBalance = 0;
+            let senderAccount = "";
 
             await runTransaction(db, async (transaction) => {
 
@@ -96,11 +103,12 @@ onAuthStateChanged(auth, (user) => {
                 const sender = senderSnap.data();
                 const receiver = receiverSnap.data();
 
-                senderName = sender.name;
-                receiverName = receiver.name;
+                senderName = sender.name ?? sender.personalDetails?.name ?? "N/A";
+                receiverName = receiver.name ?? receiver.personalDetails?.name ?? "N/A";
+                senderAccount = sender.accountNumber ?? sender.bankDetails?.accountNumber ?? "N/A";
 
-                senderBalance = Number(sender.balance);
-                receiverBalance = Number(receiver.balance);
+                senderBalance = Number(sender.balance ?? sender.accountInfo?.balance ?? 0);
+                receiverBalance = Number(receiver.balance ?? receiver.accountInfo?.balance ?? 0);
 
                 if (senderBalance < amount) {
                     throw new Error("Insufficient balance.");
@@ -108,11 +116,13 @@ onAuthStateChanged(auth, (user) => {
 
                 transaction.update(senderRef, {
                     balance: senderBalance - amount,
+                    ...(sender.accountInfo ? { "accountInfo.balance": senderBalance - amount } : {}),
                     lastTransaction: serverTimestamp()
                 });
 
                 transaction.update(receiverRef, {
                     balance: receiverBalance + amount,
+                    ...(receiver.accountInfo ? { "accountInfo.balance": receiverBalance + amount } : {}),
                     lastTransaction: serverTimestamp()
                 });
 
@@ -123,32 +133,36 @@ onAuthStateChanged(auth, (user) => {
                 Date.now() +
                 Math.floor(Math.random() * 1000);
 
+            // Add transaction for sender (Debit)
             await addDoc(collection(db, "transactions"), {
-
                 transactionId,
-
                 uid: user.uid,
-
-                type: "Transfer",
-
+                type: "Transfer (Sent)",
                 amount,
-
-                to: receiverEmail,
-
+                to: receiverAccount,
                 senderName,
-
                 receiverName,
-
                 previousBalance: senderBalance,
-
                 newBalance: senderBalance - amount,
-
                 status: "Success",
-
-                description: "Money Transfer",
-
+                description: `Sent to Account ${receiverAccount}`,
                 createdAt: serverTimestamp()
+            });
 
+            // Add transaction for receiver (Credit)
+            await addDoc(collection(db, "transactions"), {
+                transactionId,
+                uid: receiverDoc.id,
+                type: "Transfer (Received)",
+                amount,
+                from: senderAccount,
+                senderName,
+                receiverName,
+                previousBalance: receiverBalance,
+                newBalance: receiverBalance + amount,
+                status: "Success",
+                description: `Received from Account ${senderAccount}`,
+                createdAt: serverTimestamp()
             });
 
             alert(
