@@ -30,56 +30,122 @@ nav a{
     font-size:18px;
 }
 
-.hero{
-    text-align:center;
-    padding:80px 20px;
+/* Hero section styles */
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(180deg, #e0f2fe 0%, #f4f4f4 100%);
 }
 
-.hero h1{
-    font-size:42px;
-    margin-bottom:20px;
+.hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
 }
 
-.hero p{
-    font-size:20px;
-    margin-bottom:30px;
+.hero p {
+    font-size: 20px;
+    color: #475569;
+    margin-bottom: 35px;
 }
 
-.btn{
-    display:inline-block;
-    background:#0d6efd;
-    color:white;
-    text-decoration:none;
-    padding:15px 35px;
-    border-radius:5px;
+/* Premium Open Account Button */
+.btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 16px 40px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
 }
 
-.features{
-    width:90%;
-    margin:auto;
-    display:flex;
-    justify-content:space-around;
-    margin-top:60px;
-    gap:20px;
+.btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
 }
 
-.card{
-    background:white;
-    width:300px;
-    padding:30px;
-    text-align:center;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,.1);
+.btn:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
 
-.card h2{
-    margin-bottom:15px;
+/* Features Grid */
+.features {
+    width: 90%;
+    max-width: 1200px;
+    margin: 60px auto 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+    justify-content: center;
 }
 
-footer{
-    margin-top:60px;
-    background:#0d6efd;
-    color:white;
-    text-align:center;
-    padding:20px;
+/* Premium Feature Cards */
+.card {
+    background: white;
+    padding: 40px 30px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
+    border-color: rgba(37, 99, 235, 0.2);
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card h2 {
+    font-size: 24px;
+    color: #0f172a;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.card p {
+    color: #64748b;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+footer {
+    margin-top: 100px;
+    background: #0f172a;
+    color: #94a3b8;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 14px;
+    border-top: 1px solid #1e293b;
 }
